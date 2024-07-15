@@ -24,9 +24,10 @@ namespace MAPF_System
         private Unit last_AU;
         private float F_;
         private int spec;
+        private int[,] Arr;
+
 
         public bool flag;
-        public int[,] Arr;
 
 
         public Unit(int [,] Arr, int x, int y, int x_Purpose, int y_Purpose, int id, int last__x, int last__y, int X, int Y, bool was_step = false, bool flag = false) {
@@ -157,6 +158,10 @@ namespace MAPF_System
             return true;
         }
 
+        public void PlusArr()
+        {
+            Arr[x, y]++;
+        }
 
         //
 

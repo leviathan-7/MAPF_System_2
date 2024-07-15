@@ -242,23 +242,21 @@ namespace MAPF_System
             foreach (var item in units)
             {
                 Arr[item.X(), item.Y()].MakeVisit(item.Id());
-                item.Arr[item.X(), item.Y()]++;
+                item.PlusArr();
             }
 
             units = NewUnits(new List<Unit>(), units);
 
         }
 
-        private List<Unit> NewUnits(List<Unit> was_step, List<Unit> will_step)
+        private List<Unit> NewUnits(List<Unit> was_step, IEnumerable<Unit> will_step)
         {
-            if (will_step.Count == 0)
+            if (will_step.Count() == 0)
                 return was_step;
-            List<Unit> LstUnits = will_step[0].MakeStep(this, was_step, units);
-            List <Unit> new_will_step = new List<Unit>();
-            new_will_step.AddRange(will_step);
-            new_will_step.RemoveAt(0);
-            if (LstUnits.Count == 0)
+            IEnumerable<Unit> LstUnits = will_step.First().MakeStep(this, was_step, units);
+            if (LstUnits.Count() == 0)
                 return null;
+            IEnumerable<Unit> new_will_step = will_step.Skip(1);
 
             List<List<Unit>> varLst = new List<List<Unit>>();
             foreach (var unit in LstUnits)
@@ -289,12 +287,7 @@ namespace MAPF_System
 
         private int Cost(List<Unit> units)
         {
-            int sum = 0;
-            foreach (var unit in units)
-            {
-                sum += unit.Manheton();
-            }
-            return sum;
+            return (from unit in units select unit.Manheton()).Sum();
         }
 
 
