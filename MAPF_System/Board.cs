@@ -239,14 +239,31 @@ namespace MAPF_System
                 MakeBlock(Board, Unit.X() + 1, Unit.Y());
             }
 
-            foreach (var item in units)
+            foreach (var Unit in units)
             {
-                Arr[item.X(), item.Y()].MakeVisit(item.Id());
-                item.PlusArr();
+                Arr[Unit.X(), Unit.Y()].MakeVisit(Unit.Id());
+                Unit.PlusArr();
             }
 
-            units = NewUnits(new List<Unit>(), units).Item1.ToList();
+            var new_units = new List<Unit>();
+            foreach (var Claster in Clasterization(units))
+                new_units.AddRange(NewUnits(new List<Unit>(), Claster).Item1);
+            units = new_units;
 
+        }
+
+        private List<List<Unit>> Clasterization(List<Unit> units)
+        {
+            List<Unit> clasterizations = new List<Unit>();
+            List<List<Unit>> clasters = new List<List<Unit>>();
+            foreach (var unit in units)
+                if (!clasterizations.Contains(unit))
+                {
+                    List<Unit> lst = unit.FindClaster(units);
+                    clasters.Add(lst);
+                    clasterizations.AddRange(lst);
+                }
+            return clasters;
         }
 
         private Tuple<IEnumerable<Unit>, int> NewUnits(IEnumerable<Unit> was_step, IEnumerable<Unit> will_step)

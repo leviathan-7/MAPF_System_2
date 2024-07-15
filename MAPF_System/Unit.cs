@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -161,6 +162,36 @@ namespace MAPF_System
         public void PlusArr()
         {
             Arr[x, y]++;
+        }
+
+        public int Manheton()
+        {
+            int s = Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
+            if (s != 0)
+                s += Arr[x, y];
+            return s;
+        }
+
+        public List<Unit> FindClaster(List<Unit> units)
+        {
+            List<Unit> lst = new List<Unit>() { this };
+            Stack<Unit> stack = new Stack<Unit>();
+            stack.Push(this);
+            while (stack.Count() != 0)
+            {
+                Unit u = stack.Pop();
+                foreach (var item in units)
+                    if((!lst.Contains(item)) && 
+                        ((((u.x+1 == item.x) || (u.x -1 == item.x)) && ((u.y == item.y) || (u.y - 1 == item.y) || (u.y + 1 == item.y))) ||
+                        (((u.x + 2 == item.x) || (u.x - 2 == item.x)) && (u.y == item.y)) ||
+                        ((u.x == item.x) && ((u.y - 1 == item.y) || (u.y + 1 == item.y) || (u.y - 2 == item.y) || (u.y + 2 == item.y)))))
+                    {
+                        lst.Add(item);
+                        stack.Push(item);
+                    }
+            }
+
+            return lst;
         }
 
         //
@@ -476,15 +507,6 @@ namespace MAPF_System
         private float r(int x, int y){ return (float)Math.Sqrt( Math.Pow(x_Purpose - x, 2) + Math.Pow(y_Purpose - y, 2)); }
         private int h(int x, int y) { return Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y); }
 
-        //
-
-        public int Manheton()
-        {
-            int s = Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
-            if (s != 0)
-                s += Arr[x, y];
-            return s;
-        }
 
     }
 }
