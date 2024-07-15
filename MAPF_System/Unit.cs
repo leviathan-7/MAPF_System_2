@@ -21,14 +21,15 @@ namespace MAPF_System
         private bool was_step;
         private bool was_near_end;
         private bool was_bool_step;
-        private int[,] Arr;
         private Unit last_AU;
         private float F_;
         private int spec;
 
         public bool flag;
+        public int[,] Arr;
 
-        public Unit(int x, int y, int x_Purpose, int y_Purpose, int id, int last__x, int last__y, int X, int Y, bool was_step = false, bool flag = false) {
+
+        public Unit(int [,] Arr, int x, int y, int x_Purpose, int y_Purpose, int id, int last__x, int last__y, int X, int Y, bool was_step = false, bool flag = false) {
             this.id = id;
             this.was_step = was_step;
             this.flag = flag;
@@ -43,7 +44,7 @@ namespace MAPF_System
             this.last__x = last__x;
             this.last__y = last__y;
             // Массив с количеством посещений узлов
-            Arr = new int[X, Y];
+            this.Arr = Arr;
         }
         public Unit(string str, int i, int X, int Y)
         {
@@ -63,7 +64,12 @@ namespace MAPF_System
             // Массив с количеством посещений узлов
             Arr = new int[X, Y];
         }
-        public Unit Copy() { return new Unit(x, y, x_Purpose, y_Purpose, id, last__x, last__y, X_Board, Y_Board, was_step, flag); }
+        public Unit Copy(bool b = false) 
+        {
+            if (b)
+                Arr = new int[X_Board, Y_Board];
+            return new Unit(Arr, x, y, x_Purpose, y_Purpose, id, last__x, last__y, X_Board, Y_Board, was_step, flag); 
+        }
         public void NotWasStep() { was_step = false; }
         public int X() { return x; }
         public int Y() { return y; }
@@ -469,7 +475,10 @@ namespace MAPF_System
 
         public int Manheton()
         {
-            return Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
+            int s = Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
+            if (s != 0)
+                s += Arr[x, y];
+            return s;
         }
 
     }

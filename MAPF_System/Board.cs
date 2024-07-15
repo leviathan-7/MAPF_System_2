@@ -86,7 +86,7 @@ namespace MAPF_System
                         && !((Unit.X() == x_Purpose) && (Unit.Y() == y_Purpose)) && !((Unit.X_Purpose() == x) && (Unit.Y_Purpose() == y));
                 if (b)
                 {
-                    units.Add(new Unit(x, y, x_Purpose, y_Purpose, id, -1, -1, X, Y));
+                    units.Add(new Unit(new int[X, Y], x, y, x_Purpose, y_Purpose, id, -1, -1, X, Y));
                     N_Units--;
                     id++;
                 }
@@ -123,7 +123,7 @@ namespace MAPF_System
             List<Unit> CopyUnits = new List<Unit>();
             // Скопировать юнитов
             foreach (var Unit in units)
-                CopyUnits.Add(Unit.Copy());
+                CopyUnits.Add(Unit.Copy(true));
             // Скопировать доску без блоков
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
@@ -240,7 +240,10 @@ namespace MAPF_System
             }
 
             foreach (var item in units)
+            {
                 Arr[item.X(), item.Y()].MakeVisit(item.Id());
+                item.Arr[item.X(), item.Y()]++;
+            }
 
             units = NewUnits(new List<Unit>(), units);
 
@@ -388,7 +391,7 @@ namespace MAPF_System
                         && !((Unit.X() == x_Purpose) && (Unit.Y() == y_Purpose)) && !((Unit.X_Purpose() == x) && (Unit.Y_Purpose() == y));
                 if (b)
                 {
-                    units.Add(new Unit(x, y, x_Purpose, y_Purpose, units.Count, -1, -1, X, Y));
+                    units.Add(new Unit(new int[X, Y], x, y, x_Purpose, y_Purpose, units.Count, -1, -1, X, Y));
                     return;
                 }
             }
