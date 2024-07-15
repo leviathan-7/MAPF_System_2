@@ -245,49 +245,24 @@ namespace MAPF_System
                 item.PlusArr();
             }
 
-            units = NewUnits(new List<Unit>(), units);
+            units = NewUnits(new List<Unit>(), units).Item1.ToList();
 
         }
 
-        private List<Unit> NewUnits(List<Unit> was_step, IEnumerable<Unit> will_step)
+        private Tuple<IEnumerable<Unit>, int> NewUnits(IEnumerable<Unit> was_step, IEnumerable<Unit> will_step)
         {
             if (will_step.Count() == 0)
-                return was_step;
-            IEnumerable<Unit> LstUnits = will_step.First().MakeStep(this, was_step, units);
-            if (LstUnits.Count() == 0)
-                return null;
-            IEnumerable<Unit> new_will_step = will_step.Skip(1);
-
-            List<List<Unit>> varLst = new List<List<Unit>>();
-            foreach (var unit in LstUnits)
+                return new Tuple<IEnumerable<Unit>, int>(was_step, (from unit in was_step select unit.Manheton()).Sum());
+                
+            Tuple<IEnumerable<Unit>, int> res = null;
+            foreach (var unit in will_step.First().MakeStep(this, was_step, units))
             {
-                List<Unit> new_was_step = new List<Unit> { unit };
-                new_was_step.AddRange(was_step);
-
-                List<Unit> newLstUnits = NewUnits(new_was_step, new_will_step);
-                if (!(newLstUnits is null))
-                    varLst.Add(newLstUnits);
+                var T = NewUnits(was_step.Concat(new List<Unit> { unit }), will_step.Skip(1));
+                if (!(T is null) && ((res is null) || (T.Item2 < res.Item2)))
+                    res = T;
             }
-            if (varLst.Count == 0)
-                return null;
 
-            int cost = int.MaxValue;
-            List<Unit> res = null;
-            foreach (var item in varLst)
-            {
-                int c = Cost(item);
-                if (c < cost)
-                {
-                    cost = c;
-                    res = item;
-                }
-            }
             return res;
-        }
-
-        private int Cost(List<Unit> units)
-        {
-            return (from unit in units select unit.Manheton()).Sum();
         }
 
 
