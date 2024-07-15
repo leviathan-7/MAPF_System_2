@@ -247,7 +247,7 @@ namespace MAPF_System
 
             var new_units = new List<Unit>();
             foreach (var Claster in Clasterization(units))
-                new_units.AddRange(NewUnits(new List<Unit>(), Claster).Item1);
+                new_units.AddRange(NewUnits(new List<Unit>(), Claster));
             units = new_units;
 
         }
@@ -266,19 +266,28 @@ namespace MAPF_System
             return clasters;
         }
 
-        private Tuple<IEnumerable<Unit>, int> NewUnits(IEnumerable<Unit> was_step, IEnumerable<Unit> will_step)
+        private IEnumerable<Unit> NewUnits(IEnumerable<Unit> was_step, IEnumerable<Unit> will_step)
         {
-            if (will_step.Count() == 0)
-                return new Tuple<IEnumerable<Unit>, int>(was_step, (from unit in was_step select unit.Manheton()).Sum());
-                
-            Tuple<IEnumerable<Unit>, int> res = null;
-            foreach (var unit in will_step.First().MakeStep(this, was_step, units))
+            Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>> stack = new Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>>();
+            stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(was_step, will_step));
+            int sum = int.MaxValue;
+            IEnumerable<Unit> res = null; 
+            while (stack.Count() != 0)
             {
-                var T = NewUnits(was_step.Concat(new List<Unit> { unit }), will_step.Skip(1));
-                if (!(T is null) && ((res is null) || (T.Item2 < res.Item2)))
-                    res = T;
+                var T = stack.Pop();
+                if (T.Item2.Count() == 0)
+                {
+                    var s = (from unit in T.Item1 select unit.Manheton()).Sum();
+                    if (s < sum)
+                    {
+                        sum = s;
+                        res = T.Item1;
+                    }
+                }
+                else
+                    foreach (var unit in T.Item2.First().MakeStep(this, T.Item1, units))
+                        stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(T.Item1.Concat(new List<Unit> { unit }), T.Item2.Skip(1)));
             }
-
             return res;
         }
 
