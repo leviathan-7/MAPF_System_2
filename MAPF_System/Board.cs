@@ -271,6 +271,7 @@ namespace MAPF_System
             Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>> stack = new Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>>();
             stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(new List<Unit>(), claster));
             int sum = int.MaxValue;
+            int min_sum = claster.Sum(unit => unit.RealManheton()) - claster.Count(unit => !unit.IsRealEnd());
             IEnumerable<Unit> res = null; 
             while (stack.Count() != 0)
             {
@@ -278,6 +279,8 @@ namespace MAPF_System
                 if (T.Item2.Count() == 0)
                 {
                     var s = T.Item1.Sum(unit => unit.Manheton());
+                    if (s == min_sum)
+                        return T.Item1;
                     if (s < sum)
                     {
                         sum = s;

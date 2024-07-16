@@ -158,6 +158,11 @@ namespace MAPF_System
             return s;
         }
 
+        public int RealManheton()
+        {
+            return Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
+        }
+
         public HashSet<Unit> FindClaster(List<Unit> units)
         {
             HashSet<Unit> claster = new HashSet<Unit>() { this };
