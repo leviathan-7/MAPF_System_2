@@ -247,29 +247,29 @@ namespace MAPF_System
 
             var new_units = new List<Unit>();
             foreach (var Claster in Clasterization(units))
-                new_units.AddRange(NewUnits(new List<Unit>(), Claster));
+                new_units.AddRange(NewUnits(Claster));
             units = new_units;
 
         }
 
-        private List<List<Unit>> Clasterization(List<Unit> units)
+        private List<HashSet<Unit>> Clasterization(List<Unit> units)
         {
-            List<Unit> clasterizations = new List<Unit>();
-            List<List<Unit>> clasters = new List<List<Unit>>();
+            HashSet<Unit> clasterizations = new HashSet<Unit>();
+            List<HashSet<Unit>> clasters = new List<HashSet<Unit>>();
             foreach (var unit in units)
                 if (!clasterizations.Contains(unit))
                 {
-                    List<Unit> lst = unit.FindClaster(units);
-                    clasters.Add(lst);
-                    clasterizations.AddRange(lst);
+                    HashSet<Unit> claster = unit.FindClaster(units);
+                    clasters.Add(claster);
+                    clasterizations.UnionWith(claster);
                 }
             return clasters;
         }
 
-        private IEnumerable<Unit> NewUnits(IEnumerable<Unit> was_step, IEnumerable<Unit> will_step)
+        private IEnumerable<Unit> NewUnits(IEnumerable<Unit> claster)
         {
             Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>> stack = new Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>>();
-            stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(was_step, will_step));
+            stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(new List<Unit>(), claster));
             int sum = int.MaxValue;
             IEnumerable<Unit> res = null; 
             while (stack.Count() != 0)
@@ -277,7 +277,7 @@ namespace MAPF_System
                 var T = stack.Pop();
                 if (T.Item2.Count() == 0)
                 {
-                    var s = (from unit in T.Item1 select unit.Manheton()).Sum();
+                    var s = T.Item1.Sum(unit => unit.Manheton());
                     if (s < sum)
                     {
                         sum = s;
@@ -285,7 +285,7 @@ namespace MAPF_System
                     }
                 }
                 else
-                    foreach (var unit in T.Item2.First().MakeStep(this, T.Item1, units))
+                    foreach (var unit in T.Item2.First().MakeStep(this, T.Item1, claster))
                         stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(T.Item1.Concat(new List<Unit> { unit }), T.Item2.Skip(1)));
             }
             return res;

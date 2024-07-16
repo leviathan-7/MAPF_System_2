@@ -111,30 +111,17 @@ namespace MAPF_System
         public List<Unit> MakeStep(Board Board, IEnumerable<Unit> was_step, IEnumerable<Unit> units)
         {
             List <Unit> lstUnits = new List<Unit>();
-            if (Board.IsEmpthy(x, y - 1) && NoOneCell(x, y - 1, was_step, units))
-            {
-                Unit U = Copy();
-                U.y = y - 1;
-                lstUnits.Add(U);
-            }
-            if (Board.IsEmpthy(x, y + 1) && NoOneCell(x, y + 1, was_step, units))
-            {
-                Unit U = Copy();
-                U.y = y + 1;
-                lstUnits.Add(U);
-            }
-            if (Board.IsEmpthy(x - 1, y) && NoOneCell(x - 1, y, was_step, units))
-            {
-                Unit U = Copy();
-                U.x = x - 1;
-                lstUnits.Add(U);
-            }
-            if (Board.IsEmpthy(x + 1, y) && NoOneCell(x + 1, y, was_step, units))
-            {
-                Unit U = Copy();
-                U.x = x + 1;
-                lstUnits.Add(U);
-            }
+            int[] dx = { 0, 0, -1, 1 };
+            int[] dy = { -1, 1, 0, 0 };
+            for (int i = 0; i < 4; i++)
+                if (Board.IsEmpthy(x + dx[i], y + dy[i]) && NoOneCell(x + dx[i], y + dy[i], was_step, units))
+                {
+                    Unit U = Copy();
+                    U.x = x + dx[i];
+                    U.y = y + dy[i];
+                    lstUnits.Add(U);
+                }
+
             if (NoOneCell(x, y, was_step, units))
             {
                 Unit U = Copy();
@@ -145,16 +132,15 @@ namespace MAPF_System
 
         private bool NoOneCell(int _x, int _y, IEnumerable<Unit> was_step, IEnumerable<Unit> units)
         {
-            foreach (var item in was_step)
-                if ((item.x == _x) && (item.y == _y))
+            foreach (var unit in was_step)
+                if ((unit.x == _x) && (unit.y == _y))
                     return false;
 
-            foreach (var item in units)
-                if ((item.x == _x) && (item.y == _y))
+            foreach (var unit in units)
+                if ((unit.x == _x) && (unit.y == _y))
                     foreach (var u in was_step)
-                        if(u.id == item.id)
-                            if ((u.x == x) && (u.y == y))
-                                return false;
+                        if((u.id == unit.id) && (u.x == x) && (u.y == y))
+                            return false;
 
             return true;
         }
@@ -172,26 +158,26 @@ namespace MAPF_System
             return s;
         }
 
-        public List<Unit> FindClaster(List<Unit> units)
+        public HashSet<Unit> FindClaster(List<Unit> units)
         {
-            List<Unit> lst = new List<Unit>() { this };
+            HashSet<Unit> claster = new HashSet<Unit>() { this };
             Stack<Unit> stack = new Stack<Unit>();
             stack.Push(this);
             while (stack.Count() != 0)
             {
                 Unit u = stack.Pop();
-                foreach (var item in units)
-                    if((!lst.Contains(item)) && 
-                        ((((u.x+1 == item.x) || (u.x -1 == item.x)) && ((u.y == item.y) || (u.y - 1 == item.y) || (u.y + 1 == item.y))) ||
-                        (((u.x + 2 == item.x) || (u.x - 2 == item.x)) && (u.y == item.y)) ||
-                        ((u.x == item.x) && ((u.y - 1 == item.y) || (u.y + 1 == item.y) || (u.y - 2 == item.y) || (u.y + 2 == item.y)))))
+                foreach (var unit in units)
+                    if((!claster.Contains(unit)) && 
+                        ((((u.x+1 == unit.x) || (u.x -1 == unit.x)) && ((u.y == unit.y) || (u.y - 1 == unit.y) || (u.y + 1 == unit.y))) ||
+                        (((u.x + 2 == unit.x) || (u.x - 2 == unit.x)) && (u.y == unit.y)) ||
+                        ((u.x == unit.x) && ((u.y - 1 == unit.y) || (u.y + 1 == unit.y) || (u.y - 2 == unit.y) || (u.y + 2 == unit.y)))))
                     {
-                        lst.Add(item);
-                        stack.Push(item);
+                        claster.Add(unit);
+                        stack.Push(unit);
                     }
             }
 
-            return lst;
+            return claster;
         }
 
         //
