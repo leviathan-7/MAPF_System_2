@@ -123,10 +123,8 @@ namespace MAPF_System
                 }
 
             if (NoOneCell(x, y, was_step, units))
-            {
-                Unit U = Copy();
-                lstUnits.Add(U);
-            }
+                lstUnits.Add(Copy());
+
             return lstUnits;
         }
 
@@ -152,10 +150,8 @@ namespace MAPF_System
 
         public int Manheton()
         {
-            int s = Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
-            if (s != 0)
-                s += Arr[x, y];
-            return s;
+            int s = RealManheton();
+            return s != 0 ? s + Arr[x, y] : 0;
         }
 
         public int RealManheton()
