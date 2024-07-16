@@ -102,7 +102,7 @@ namespace MAPF_System
                         Board TimeBoard = Board.CopyWithoutBlocks();
                         int i = 0;
                         while (!TimeBoard.IsEnd() && (i++) < (N - 1))
-                            TimeBoard.MakeStep(Board, kol_iter_a_star);
+                            TimeBoard.MakeStep(Board);
                         if (i == N)
                         {
                             table.Rows.Add(f.Split('\\').Last(), "Ошибка");

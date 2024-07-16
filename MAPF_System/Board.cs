@@ -228,7 +228,7 @@ namespace MAPF_System
 
         //
         
-        public void MakeStep(Board Board, int kol_iter_a_star)
+        public void MakeStep(Board Board)
         {
             // Добавить блоки в пределах видимости юнитов
             foreach (var Unit in units)
@@ -338,8 +338,10 @@ namespace MAPF_System
             return false;
         }
 
-        public Tunell Tunell(int x, int y) { return Arr[x, y].Tunell(); }
-
+        public Tunell Tunell(int x, int y) 
+        { 
+            return Arr[x, y].Tunell(); 
+        }
 
         public bool InTunell(int unit_id, Tunell tunell) 
         {
@@ -364,15 +366,6 @@ namespace MAPF_System
                 return false;
             return !Arr[x, y].IsBlock();
         }
-        public bool IsEmpthyAndNoTunel(int x, int y)
-        {
-            // Проверка на выход за пределы поля
-            if ((x < 0) || (y < 0) || (x >= X) || (y >= Y))
-                return false;
-            if (Arr[x, y].IsTunell())
-                return false;
-            return !Arr[x, y].IsBlock();
-        }
         public bool IsTunell(int x, int y)
         {
             // Проверка на выход за пределы поля
@@ -380,12 +373,9 @@ namespace MAPF_System
                 return false;
             return Arr[x, y].IsTunell();
         }
-        public bool IsBadCell(int x, int y) { return Arr[x, y].IsBad(); }
-        public void MakeVisit(int x, int y, int id) { Arr[x, y].MakeVisit(id); }
         public string Name() { return name; }
         public List<Unit> Units() { return units; }
         
-        //public bool InTunell(Unit unit, Tunell tunell) { return Arr[unit.X(), unit.Y()].Tunell() == tunell; }
         public int GET_X() { return X; }
         public int GET_Y() { return Y; }
         public bool GetWasGame() { return WasGame; }
@@ -536,13 +526,6 @@ namespace MAPF_System
                 MessageBox.Show("Файл повреждён.", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private bool IsBad(int x, int y)
-        {
-            // Проверка на выход за пределы поля
-            if ((x < 0) || (y < 0) || (x >= X) || (y >= Y))
-                return false;
-            return Arr[x, y].IsBad();
-        }
         private bool IsBlock(int x, int y)
         {
             // Проверка на выход за пределы поля
@@ -552,18 +535,12 @@ namespace MAPF_System
         }
         private void LT_ADD(List<Tunell> LT, int i, int j)
         {
-            if (IsTunell(i, j) && !IsBad(i, j))
+            if (IsTunell(i, j))
                 LT.Add(Arr[i, j].Tunell());
         }
         private int TunellAndNoEmpthy(int i, int j)
         {
             if (!IsEmpthy(i, j) || IsTunell(i, j))
-                return 1;
-            return 0;
-        }
-        private int BadAndNoEmpthy(int i, int j)
-        {
-            if (!IsEmpthy(i, j) || IsBad(i, j))
                 return 1;
             return 0;
         }

@@ -39,27 +39,13 @@ namespace MAPF_System
                     tunells.Add(tt);
             }
         }
-        /*public void MakeFlags(Board Board)
-        {
-            bool b = true;
-            foreach (var Unit_id in tunell_units)
-            {
-                if (Unit.IsRealEnd())
-                    Unit.flag = false;
-                bool t = Board.InTunell(Unit, this);
-                foreach (var tunell in tunells)
-                    t = t || Board.InTunell(Unit, tunell);
-                b = b && t;
-                if (Unit.IsRealEnd() && !b)
-                    Unit.flag = true;
-            }
-        }*/
+
         public List<int> Ids(Board board)
         {
             List<int> lst = new List<int>();
             foreach (var Unit_id in (from unit in board.Units() select unit.Id()).Except(tunell_units_id))
                 if (board.InTunell(Unit_id, this))
-                    return new List<int>() { -1 };
+                    return lst;
             foreach (var Unit_id in tunell_units_id)
             {
                 lst.Add(Unit_id);
