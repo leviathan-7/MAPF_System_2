@@ -281,7 +281,7 @@ namespace MAPF_System
                     var s = T.Item1.Sum(unit => unit.Manheton());
                     if (s == min_sum)
                         return T.Item1;
-                    if (s < sum)
+                    if ((s < sum) && isntEqw(claster, T.Item1))
                     {
                         sum = s;
                         res = T.Item1;
@@ -294,6 +294,15 @@ namespace MAPF_System
             return res;
         }
 
+        private bool isntEqw(IEnumerable<Unit> units1, IEnumerable<Unit> units2)
+        {
+            var sort1 = units1.OrderBy(unit => unit.Id()).ToList();
+            var sort2 = units2.OrderBy(unit => unit.Id()).ToList();
+            for (int i = 0; i < sort1.Count(); i++)
+                if ((sort1[i].X() != sort2[i].X()) || (sort1[i].Y() != sort2[i].Y()))
+                    return true;
+            return false;
+        }
 
         //
 
