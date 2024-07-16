@@ -239,6 +239,40 @@ namespace MAPF_System
                 MakeBlock(Board, Unit.X() + 1, Unit.Y());
             }
 
+            // Добавить узлы -- части туннелей
+            while (true)
+            {
+                int k = 0;
+                for (int i = 0; i < X; i++)
+                    for (int j = 0; j < Y; j++)
+                        if (!(IsTunell(i, j) || Arr[i, j].IsBlock()))
+                        {
+                            int kk = 0;
+                            kk += TunellAndNoEmpthy(i - 1, j);
+                            kk += TunellAndNoEmpthy(i + 1, j);
+                            kk += TunellAndNoEmpthy(i, j - 1);
+                            kk += TunellAndNoEmpthy(i, j + 1);
+
+                            if (kk == 3)
+                            {
+                                List<Tunell> LT = new List<Tunell>();
+                                LT_ADD(LT, i - 1, j);
+                                LT_ADD(LT, i + 1, j);
+                                LT_ADD(LT, i, j - 1);
+                                LT_ADD(LT, i, j + 1);
+
+                                var T = new Tunell(this);
+                                T.Add(LT);
+                                Arr[i, j].MakeTunell(T);
+                                tunells.Add(T);
+                                T.Add(i, j);
+                            }
+                        }
+
+                if (k == 0)
+                    break;
+            }
+
             foreach (var Unit in units)
             {
                 Arr[Unit.X(), Unit.Y()].MakeVisit(Unit.Id());
@@ -278,7 +312,7 @@ namespace MAPF_System
                 var T = stack.Pop();
                 if (T.Item2.Count() == 0)
                 {
-                    var s = T.Item1.Sum(unit => unit.Manheton());
+                    var s = T.Item1.Sum(unit => unit.Manheton(this));
                     if (s == min_sum)
                         return T.Item1;
                     if ((s < sum) && isntEqw(claster, T.Item1))
@@ -302,6 +336,15 @@ namespace MAPF_System
                 if ((sort1[i].X() != sort2[i].X()) || (sort1[i].Y() != sort2[i].Y()))
                     return true;
             return false;
+        }
+
+        public Tunell Tunell(int x, int y) { return Arr[x, y].Tunell(); }
+
+
+        public bool InTunell(int unit_id, Tunell tunell) 
+        {
+            Unit unit = units.Find(u => u.Id() == unit_id);
+            return Arr[unit.X(), unit.Y()].Tunell() == tunell; 
         }
 
         //
@@ -341,8 +384,8 @@ namespace MAPF_System
         public void MakeVisit(int x, int y, int id) { Arr[x, y].MakeVisit(id); }
         public string Name() { return name; }
         public List<Unit> Units() { return units; }
-        public int TunellId(int x, int y) { return Arr[x, y].Tunell().Id(); }
-        public bool InTunell(Unit unit, Tunell tunell) { return Arr[unit.X(), unit.Y()].Tunell() == tunell; }
+        
+        //public bool InTunell(Unit unit, Tunell tunell) { return Arr[unit.X(), unit.Y()].Tunell() == tunell; }
         public int GET_X() { return X; }
         public int GET_Y() { return Y; }
         public bool GetWasGame() { return WasGame; }

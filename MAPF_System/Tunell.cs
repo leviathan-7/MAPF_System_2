@@ -10,13 +10,13 @@ namespace MAPF_System
     public class Tunell
     {
         private Board board;
-        private List<Unit> tunell_units;
+        private List<int> tunell_units_id;
         private List<Tunell> tunells;
 
         public Tunell(Board board)
         {
             this.board = board;
-            tunell_units = new List<Unit>();
+            tunell_units_id = new List<int>();
             tunells = new List<Tunell>();
         }
         public void Add(int x, int y)
@@ -24,7 +24,7 @@ namespace MAPF_System
             foreach (var Unit in board.Units())
                 if ((Unit.X_Purpose() == x) && (Unit.Y_Purpose() == y))
                 {
-                    tunell_units.Add(Unit);
+                    tunell_units_id.Add(Unit.Id());
                     break;
                 }
         }
@@ -33,16 +33,16 @@ namespace MAPF_System
             foreach (var t in LT)
             {
                 tunells.Add(t);
-                foreach (var u in t.tunell_units)
-                    tunell_units.Add(u);
+                foreach (var u in t.tunell_units_id)
+                    tunell_units_id.Add(u);
                 foreach (var tt in t.tunells)
                     tunells.Add(tt);
             }
         }
-        public void MakeFlags(Board Board)
+        /*public void MakeFlags(Board Board)
         {
             bool b = true;
-            foreach (var Unit in tunell_units)
+            foreach (var Unit_id in tunell_units)
             {
                 if (Unit.IsRealEnd())
                     Unit.flag = false;
@@ -53,18 +53,23 @@ namespace MAPF_System
                 if (Unit.IsRealEnd() && !b)
                     Unit.flag = true;
             }
-        }
-        public int Id()
+        }*/
+        public List<int> Ids(Board board)
         {
-            foreach (var Unit in tunell_units)
+            List<int> lst = new List<int>();
+            foreach (var Unit_id in (from unit in board.Units() select unit.Id()).Except(tunell_units_id))
+                if (board.InTunell(Unit_id, this))
+                    return new List<int>() { -1 };
+            foreach (var Unit_id in tunell_units_id)
             {
-                bool b = board.InTunell(Unit, this);
+                lst.Add(Unit_id);
+                bool b = board.InTunell(Unit_id, this);
                 foreach (var tunell in tunells)
-                    b = b || board.InTunell(Unit, tunell);
+                    b = b || board.InTunell(Unit_id, tunell);
                 if (!b)
-                    return Unit.Id();
+                    return lst;
             }
-            return -1;
+            return lst;
         }
     }
 }

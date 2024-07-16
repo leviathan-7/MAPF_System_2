@@ -148,9 +148,18 @@ namespace MAPF_System
             Arr[x, y]++;
         }
 
-        public int Manheton()
+        public int Manheton(Board board)
         {
             int s = RealManheton();
+
+            Tunell T = board.Tunell(x, y);
+            if (!(T is null))
+            {
+                if (!T.Ids(board).Contains(id))
+                    if (T.Ids(board).Count() == 0 || T.Ids(board).Last() != id)
+                        return 1000 + s + Arr[x, y];
+            }
+
             return s != 0 ? s + Arr[x, y] : 0;
         }
 
@@ -185,7 +194,7 @@ namespace MAPF_System
 
 
 
-        private bool MakeStep(Board Board, IEnumerable<Unit> AnotherUnits, int xx, int yy, int kol_iter_a_star, bool signal, Unit AU)
+        /*private bool MakeStep(Board Board, IEnumerable<Unit> AnotherUnits, int xx, int yy, int kol_iter_a_star, bool signal, Unit AU)
         {
             bool lasttrue = IsEnd();
             // Проверяем, что юнит еще не работал на данной итерации
@@ -257,7 +266,7 @@ namespace MAPF_System
             }
             
             return was_step;
-        }
+        }*/
         private void StartSpec()
         {
             if (was_near_end)
@@ -268,7 +277,7 @@ namespace MAPF_System
                 was_near_end = true;
             }
         }
-        private Tuple<int, float> MIN_I(List<float> rr, List<float> ff, Board Board, List<Unit> UsUnits, List<int> a, List<int> b, int xx, int yy, int kol_iter_a_star)
+        /*private Tuple<int, float> MIN_I(List<float> rr, List<float> ff, Board Board, List<Unit> UsUnits, List<int> a, List<int> b, int xx, int yy, int kol_iter_a_star)
         {
             ff[4] = int.MaxValue;
             float min = ff[4];
@@ -358,8 +367,8 @@ namespace MAPF_System
             
             // Возвращаем подходящую нам клетку
             return new Tuple<int, float>(min_i, min);
-        }
-        private void IfBoardIsEmpthy(List<float> rr, List<float> ff, Board Board, List<Unit> UsUnits, IEnumerable<Unit> AnotherUnits, int kol_iter_a_star, bool is_bool_step = false)
+        }*/
+        /*private void IfBoardIsEmpthy(List<float> rr, List<float> ff, Board Board, List<Unit> UsUnits, IEnumerable<Unit> AnotherUnits, int kol_iter_a_star, bool is_bool_step = false)
         {
             Parallel.For(0, 4, (i) => 
             {
@@ -373,8 +382,8 @@ namespace MAPF_System
                     GetUnitAndF(3, rr, ff, UsUnits, x + 1, y, x, y, Board, kol_iter_a_star, AnotherUnits, is_bool_step);
             });
             
-        }
-        private void GetUnitAndF(int i, List<float> rr, List<float> ff, List<Unit> UsUnits, int x0, int y0, int x, int y, Board Board, int kol_iter_a_star, IEnumerable<Unit> AnotherUnits, bool is_bool_step)
+        }*/
+        /*private void GetUnitAndF(int i, List<float> rr, List<float> ff, List<Unit> UsUnits, int x0, int y0, int x, int y, Board Board, int kol_iter_a_star, IEnumerable<Unit> AnotherUnits, bool is_bool_step)
         {
             float[,,,] ArrG = new float[X_Board, Y_Board, X_Board, Y_Board];
             int MaxG = int.MaxValue;
@@ -399,7 +408,7 @@ namespace MAPF_System
                     UsUnits[i] = au;
                     return;
                 }
-        }
+        }*/
         private void InWasStep(Tuple<int, float> T, bool lasttrue)
         {
             last__x = x;
@@ -418,7 +427,7 @@ namespace MAPF_System
                 last__y = -1;
             }
         }
-        private float f(int x, int y, Board Board, int kol_iter_a_star, int last_x, int last_y, bool is_bool_step, int g, ref float[,,,] ArrG, ref int MaxG, ref bool GreatFlag)
+        /*private float f(int x, int y, Board Board, int kol_iter_a_star, int last_x, int last_y, bool is_bool_step, int g, ref float[,,,] ArrG, ref int MaxG, ref bool GreatFlag)
         {
             if ((g > MaxG) || GreatFlag)
                 return int.MaxValue / 2;
@@ -490,7 +499,7 @@ namespace MAPF_System
                 GreatFlag = true;
             // Считаем эвристическую оценку, если максимальная глубина достигнута
             return h(x, y);
-        }
+        }*/
         private float r(int x, int y){ return (float)Math.Sqrt( Math.Pow(x_Purpose - x, 2) + Math.Pow(y_Purpose - y, 2)); }
         private int h(int x, int y) { return Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y); }
 
