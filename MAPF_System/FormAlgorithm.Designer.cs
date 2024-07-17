@@ -34,8 +34,6 @@ namespace MAPF_System
             this.label1 = new System.Windows.Forms.Label();
             this.label_kol_iterat = new System.Windows.Forms.Label();
             this.textBox_Name = new System.Windows.Forms.TextBox();
-            this.textBox_kol_iter_a_star = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -112,24 +110,6 @@ namespace MAPF_System
             this.textBox_Name.Size = new System.Drawing.Size(132, 24);
             this.textBox_Name.TabIndex = 9;
             // 
-            // textBox_kol_iter_a_star
-            // 
-            this.textBox_kol_iter_a_star.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.textBox_kol_iter_a_star.Location = new System.Drawing.Point(193, 62);
-            this.textBox_kol_iter_a_star.Name = "textBox_kol_iter_a_star";
-            this.textBox_kol_iter_a_star.Size = new System.Drawing.Size(132, 24);
-            this.textBox_kol_iter_a_star.TabIndex = 16;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.label2.Location = new System.Drawing.Point(192, 28);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(238, 18);
-            this.label2.TabIndex = 17;
-            this.label2.Text = "Глубина просмотра (от 7 до 20): ";
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -205,8 +185,6 @@ namespace MAPF_System
             this.groupBox1.Controls.Add(this.button_Step);
             this.groupBox1.Controls.Add(this.button_Save);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox_kol_iter_a_star);
             this.groupBox1.Controls.Add(this.textBox_Name);
             this.groupBox1.Controls.Add(this.label_kol_iterat);
             this.groupBox1.Controls.Add(this.label1);
@@ -636,8 +614,6 @@ namespace MAPF_System
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label_kol_iterat;
         private System.Windows.Forms.TextBox textBox_Name;
-        private System.Windows.Forms.TextBox textBox_kol_iter_a_star;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label5;
         private CustomControls.RJControls.RJButton button_Save;
         private CustomControls.RJControls.RJButton button_Step;

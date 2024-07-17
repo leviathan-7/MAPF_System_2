@@ -140,7 +140,7 @@ namespace MAPF_System
 
         public int Manheton(Board board)
         {
-            int s = RealManheton();
+            int s = FindMin(x, y, board, true);
 
             Tunell T = board.Tunell(x, y);
             if (!(T is null) && !T.Ids(board).Contains(id) && (T.Ids(board).Count() == 0 || T.Ids(board).Last() != id))
@@ -149,7 +149,43 @@ namespace MAPF_System
             return s != 0 ? s + Arr[x, y] : 0;
         }
 
+        private int FindMin(int x, int y, Board board, bool iter)
+        {
+            int s = RealManheton(x, y);
+            if (s <= 1)
+                return s;
+            List<int> list = new List<int>();
+            if (iter)
+            {
+                if (board.IsEmpthy(x + 1, y))
+                    list.Add(FindMin(x + 1, y, board, !iter));
+                if (board.IsEmpthy(x - 1, y))
+                    list.Add(FindMin(x - 1, y, board, !iter));
+                if (board.IsEmpthy(x, y + 1))
+                    list.Add(FindMin(x, y + 1, board, !iter));
+                if (board.IsEmpthy(x, y - 1))
+                    list.Add(FindMin(x, y - 1, board, !iter));
+            }
+            else 
+            {
+                if (board.IsEmpthy(x + 1, y))
+                    list.Add(RealManheton(x + 1, y));
+                if (board.IsEmpthy(x - 1, y))
+                    list.Add(RealManheton(x - 1, y));
+                if (board.IsEmpthy(x, y + 1))
+                    list.Add(RealManheton(x, y + 1));
+                if (board.IsEmpthy(x, y - 1))
+                    list.Add(RealManheton(x, y - 1));
+            }
+            return 1 + list.Min();
+        }
+
         public int RealManheton()
+        {
+            return RealManheton(x, y);
+        }
+
+        private int RealManheton(int x, int y)
         {
             return Math.Abs(x_Purpose - x) + Math.Abs(y_Purpose - y);
         }

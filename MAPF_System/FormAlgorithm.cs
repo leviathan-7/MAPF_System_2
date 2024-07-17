@@ -24,7 +24,6 @@ namespace MAPF_System
             this.Board = Board;
             was_game = Board.GetWasGame();
             InitializeComponent();
-            textBox_kol_iter_a_star.Text = str_kol_iter_a_star;
             label6.Text = Board.Name();
             // Позиция данной формы
             StartPosition = FormStartPosition.Manual;
@@ -72,32 +71,21 @@ namespace MAPF_System
 
         private void button_Start_Click(object sender, EventArgs e)
         {
-            if (!int.TryParse(textBox_kol_iter_a_star.Text, out int kol_iter_a_star) || (kol_iter_a_star < 7) || (kol_iter_a_star > 20))
-            {
-                SystemSounds.Beep.Play();
-                label_Error.Text = "Глубина не верна!";
-                return;
-            }
+
             // Максимальное колличество итераций
             int N = 5000;
             Board TimeBoard = Board.CopyWithoutBlocks();
             int i = 0;
             while (!TimeBoard.IsEnd() && (i++) < (N-1))
                 TimeBoard.MakeStep(Board);
-            (new FormAlgorithm(TimeBoard, i, i == N, "" + kol_iter_a_star, true)).Show();
+            (new FormAlgorithm(TimeBoard, i, i == N, "", true)).Show();
         }
 
         private void button_Step_Click(object sender, EventArgs e)
         {
-            if (!int.TryParse(textBox_kol_iter_a_star.Text, out int kol_iter_a_star) || (kol_iter_a_star < 7) || (kol_iter_a_star > 20))
-            {
-                SystemSounds.Beep.Play();
-                label_Error.Text = "Глубина не верна!";
-                return;
-            }
             Board TimeBoard = Board.CopyWithoutBlocks();
             int i = 1;
-            FormAlgorithm F = new FormAlgorithm(TimeBoard, 0, false, "" + kol_iter_a_star, true);
+            FormAlgorithm F = new FormAlgorithm(TimeBoard, 0, false, "", true);
             F.Show();
             while (!TimeBoard.IsEnd()) 
             {
