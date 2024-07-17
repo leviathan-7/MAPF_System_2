@@ -21,6 +21,7 @@ namespace MAPF_System
         private Random rnd;
         private string name;
         private bool WasGame;
+        private bool AreNotTunells;
 
         public Board(int X, int Y, int Blocks, int N_Units)
         {
@@ -240,38 +241,47 @@ namespace MAPF_System
             }
 
             // Добавить узлы -- части туннелей
-            while (true)
-            {
-                int k = 0;
-                for (int i = 0; i < X; i++)
-                    for (int j = 0; j < Y; j++)
-                        if (!(IsTunell(i, j) || Arr[i, j].IsBlock()))
-                        {
-                            int kk = 0;
-                            kk += TunellAndNoEmpthy(i - 1, j);
-                            kk += TunellAndNoEmpthy(i + 1, j);
-                            kk += TunellAndNoEmpthy(i, j - 1);
-                            kk += TunellAndNoEmpthy(i, j + 1);
-
-                            if (kk == 3)
+            if (!AreNotTunells)
+                while (true)
+                {
+                    int k = 0;
+                    for (int i = 0; i < X; i++)
+                        for (int j = 0; j < Y; j++)
+                            if (!(IsTunell(i, j) || Arr[i, j].IsBlock()))
                             {
-                                List<Tunell> LT = new List<Tunell>();
-                                LT_ADD(LT, i - 1, j);
-                                LT_ADD(LT, i + 1, j);
-                                LT_ADD(LT, i, j - 1);
-                                LT_ADD(LT, i, j + 1);
+                                int kk = 0;
+                                kk += TunellAndNoEmpthy(i - 1, j);
+                                kk += TunellAndNoEmpthy(i + 1, j);
+                                kk += TunellAndNoEmpthy(i, j - 1);
+                                kk += TunellAndNoEmpthy(i, j + 1);
 
-                                var T = new Tunell(this);
-                                T.Add(LT);
-                                Arr[i, j].MakeTunell(T);
-                                tunells.Add(T);
-                                T.Add(i, j);
+                                if (!AreNotTunells && kk == 3)
+                                {
+                                    List<Tunell> LT = new List<Tunell>();
+                                    LT_ADD(LT, i - 1, j);
+                                    LT_ADD(LT, i + 1, j);
+                                    LT_ADD(LT, i, j - 1);
+                                    LT_ADD(LT, i, j + 1);
+
+                                    var T = new Tunell(this);
+                                    T.Add(LT);
+                                    Arr[i, j].MakeTunell(T);
+                                    tunells.Add(T);
+                                    T.Add(i, j);
+                                }
+
+                                if (kk == 4 && Arr[i,j].WasVisit())
+                                {
+                                    AreNotTunells = true;
+                                    for (int ii = 0; ii < X; ii++)
+                                        for (int jj = 0; jj < Y; jj++)
+                                            Arr[ii, jj].ClearTunell();
+                                }
                             }
-                        }
 
-                if (k == 0)
-                    break;
-            }
+                    if (k == 0)
+                        break;
+                }
 
             foreach (var Unit in units)
             {
