@@ -63,10 +63,10 @@ namespace MAPF_System
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.linkLabel1.Location = new System.Drawing.Point(12, 116);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(302, 18);
+            this.linkLabel1.Size = new System.Drawing.Size(318, 18);
             this.linkLabel1.TabIndex = 12;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "https://github.com/leviathan-7/MAPF_System";
+            this.linkLabel1.Text = "https://github.com/leviathan-7/MAPF_System_2";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // groupBox1

@@ -8,6 +8,7 @@ using System.IO;
 using System.Security;
 using System.Windows.Forms;
 using System.Media;
+using System.Collections;
 
 namespace MAPF_System
 {
@@ -287,6 +288,8 @@ namespace MAPF_System
             {
                 Arr[Unit.X(), Unit.Y()].MakeVisit(Unit.Id());
                 Unit.PlusArr();
+                if (Unit.IsRealEnd())
+                    Unit.ClearArr();
             }
 
             var new_units = new List<Unit>();
@@ -312,11 +315,20 @@ namespace MAPF_System
 
         private IEnumerable<Unit> NewUnits(IEnumerable<Unit> claster)
         {
-            Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>> stack = new Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>>();
-            stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(new List<Unit>(), claster));
-            int sum = int.MaxValue;
+            Tuple<IEnumerable<Unit>, IEnumerable<Unit>> TT = new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(new List<Unit>(), claster);
             int min_sum = claster.Sum(unit => unit.RealManheton()) - claster.Count(unit => !unit.IsRealEnd());
-            IEnumerable<Unit> res = null; 
+            IEnumerable<Unit> res = NewUnitsStack(TT, min_sum, claster, true);
+            if (!(res is null))
+                return res;
+            return NewUnitsStack(TT, min_sum, claster, false);
+        }
+
+        private IEnumerable<Unit> NewUnitsStack(Tuple<IEnumerable<Unit>, IEnumerable<Unit>> TT, int min_sum, IEnumerable<Unit> claster, bool b)
+        {
+            int sum = int.MaxValue;
+            Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>> stack = new Stack<Tuple<IEnumerable<Unit>, IEnumerable<Unit>>>();
+            stack.Push(TT);
+            IEnumerable<Unit> res = null;
             while (stack.Count() != 0)
             {
                 var T = stack.Pop();
@@ -325,26 +337,37 @@ namespace MAPF_System
                     var s = T.Item1.Sum(unit => unit.Manheton(this));
                     if (s == min_sum)
                         return T.Item1;
-                    if ((s < sum) && isntEqw(claster, T.Item1))
+                    if ((s < sum) && isntEqw(claster, T.Item1, b))
                     {
                         sum = s;
                         res = T.Item1;
                     }
                 }
                 else
-                    foreach (var unit in T.Item2.First().MakeStep(this, T.Item1, claster))
+                    foreach (var unit in T.Item2.First().MakeStep(this, T.Item1, claster, b))
                         stack.Push(new Tuple<IEnumerable<Unit>, IEnumerable<Unit>>(T.Item1.Concat(new List<Unit> { unit }), T.Item2.Skip(1)));
             }
             return res;
         }
 
-        private bool isntEqw(IEnumerable<Unit> units1, IEnumerable<Unit> units2)
+        private bool isntEqw(IEnumerable<Unit> units1, IEnumerable<Unit> units2, bool b)
         {
             var sort1 = units1.OrderBy(unit => unit.Id()).ToList();
             var sort2 = units2.OrderBy(unit => unit.Id()).ToList();
             for (int i = 0; i < sort1.Count(); i++)
                 if ((sort1[i].X() != sort2[i].X()) || (sort1[i].Y() != sort2[i].Y()))
-                    return true;
+                {
+                    if (sort1[i].IsRealEnd() && !sort2[i].IsRealEnd())
+                    {
+                        Tunell T = Tunell(sort1[i].X(), sort1[i].Y());
+                        if (!(T is null) && !T.RealIds().Contains(sort1[i].Id()))
+                            return true;
+                    }
+                    else
+                        return true;
+                }
+
+
             return false;
         }
 

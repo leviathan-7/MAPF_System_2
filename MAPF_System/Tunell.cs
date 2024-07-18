@@ -57,5 +57,20 @@ namespace MAPF_System
             }
             return lst;
         }
+
+        public List<int> RealIds()
+        {
+            List<int> lst = new List<int>();
+            foreach (var Unit_id in tunell_units_id)
+            {
+                lst.Add(Unit_id);
+                bool b = board.InTunell(Unit_id, this);
+                foreach (var tunell in tunells)
+                    b = b || board.InTunell(Unit_id, tunell);
+                if (!b)
+                    return lst;
+            }
+            return lst;
+        }
     }
 }

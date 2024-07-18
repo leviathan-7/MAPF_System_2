@@ -15,20 +15,17 @@ namespace MAPF_System
         private int id;
         private int x;
         private int y;
-        private int last__x;
-        private int last__y;
         private int x_Purpose;
         private int y_Purpose;
-        private bool was_step;
         private int[,] Arr;
 
+        private Unit last_Unit;
 
         public bool flag;
 
 
         public Unit(int [,] Arr, int x, int y, int x_Purpose, int y_Purpose, int id, int last__x, int last__y, int X, int Y, bool was_step = false, bool flag = false) {
             this.id = id;
-            this.was_step = was_step;
             this.flag = flag;
             X_Board = X;
             Y_Board = Y;
@@ -38,15 +35,12 @@ namespace MAPF_System
             // Задание местоположения цели юнити
             this.x_Purpose = x_Purpose;
             this.y_Purpose = y_Purpose;
-            this.last__x = last__x;
-            this.last__y = last__y;
             // Массив с количеством посещений узлов
             this.Arr = Arr;
         }
         public Unit(string str, int i, int X, int Y)
         {
             flag = false;
-            was_step = false;
             string[] arr = str.Split(' ');
             X_Board = X;
             Y_Board = Y;
@@ -56,8 +50,6 @@ namespace MAPF_System
             x_Purpose = int.Parse(arr[2]);
             y_Purpose = int.Parse(arr[3]);
             id = i;
-            last__x = -1;
-            last__y = -1;
             // Массив с количеством посещений узлов
             Arr = new int[X, Y];
         }
@@ -65,7 +57,7 @@ namespace MAPF_System
         {
             if (b)
                 Arr = new int[X_Board, Y_Board];
-            return new Unit(Arr, x, y, x_Purpose, y_Purpose, id, last__x, last__y, X_Board, Y_Board, was_step, flag); 
+            return new Unit(Arr, x, y, x_Purpose, y_Purpose, id, -1, -1, X_Board, Y_Board, false, flag); 
         }
         public int X() { return x; }
         public int Y() { return y; }
@@ -98,7 +90,7 @@ namespace MAPF_System
         
         //
 
-        public List<Unit> MakeStep(Board Board, IEnumerable<Unit> was_step, IEnumerable<Unit> units)
+        public List<Unit> MakeStep(Board Board, IEnumerable<Unit> was_step, IEnumerable<Unit> units, bool b)
         {
             List <Unit> lstUnits = new List<Unit>();
             int[] dx = { 0, 0, -1, 1 };
@@ -109,7 +101,15 @@ namespace MAPF_System
                     Unit U = Copy();
                     U.x = x + dx[i];
                     U.y = y + dy[i];
-                    lstUnits.Add(U);
+                    U.last_Unit = this;
+                    if (b)
+                    {
+                        if (last_Unit is null || !(U.x == last_Unit.x && U.y == last_Unit.y) || !(Board.Units().Find(unit => unit.x == U.x && unit.y == U.y) == null))
+                            lstUnits.Add(U);
+                    }
+                    else
+                        lstUnits.Add(U);
+                    
                 }
 
             if (NoOneCell(x, y, was_step, units))
@@ -144,9 +144,9 @@ namespace MAPF_System
 
             Tunell T = board.Tunell(x, y);
             if (!(T is null) && !T.Ids(board).Contains(id) && (T.Ids(board).Count() == 0 || T.Ids(board).Last() != id))
-                return 1000 + s + Arr[x, y];
+                return 1000 + s + 2 * Arr[x, y];
 
-            return s != 0 ? s + Arr[x, y] : 0;
+            return s != 0 ? s + 2 * Arr[x, y] : 0;
         }
 
         private int FindMin(int x, int y, Board board, bool iter)
@@ -212,5 +212,9 @@ namespace MAPF_System
             return claster;
         }
 
+        public void ClearArr()
+        {
+            Arr = new int[X_Board, Y_Board];
+        }
     }
 }

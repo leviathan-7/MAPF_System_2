@@ -593,7 +593,7 @@ namespace MAPF_System
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FormAlgorithm";
-            this.Text = "Запуск алгоритма MAPF";
+            this.Text = "Запуск алгоритма MAPF (версия 2 - централизованная)";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormAlgorithm_KeyDown);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormAlgorithm_MouseClick);
             this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.FormAlgorithm_MouseDoubleClick);
