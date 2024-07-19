@@ -143,10 +143,14 @@ namespace MAPF_System
             int s = FindMin(x, y, board, true);
 
             Tunell T = board.Tunell(x, y);
+            int a = Arr[x, y];
             if (!(T is null) && !T.Ids().Contains(id))
-                return 1000 + s + 2 * Arr[x, y];
+                return 1000 + s + 2 * a;
 
-            return s != 0 ? s + 2 * Arr[x, y] : 0;
+            if (!(T is null) && !(last_Unit is null) && board.Tunell(last_Unit.x, last_Unit.y) is null)
+                a = 0;
+
+            return s != 0 ? s + 2 * a : 0;
         }
 
         private int FindMin(int x, int y, Board board, bool iter)
