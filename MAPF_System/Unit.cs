@@ -143,7 +143,7 @@ namespace MAPF_System
             int s = FindMin(x, y, board, true);
 
             Tunell T = board.Tunell(x, y);
-            if (!(T is null) && !T.Ids().Contains(id) && (T.Ids().Count() == 0 || T.Ids().Last() != id))
+            if (!(T is null) && !T.Ids().Contains(id))
                 return 1000 + s + 2 * Arr[x, y];
 
             return s != 0 ? s + 2 * Arr[x, y] : 0;
